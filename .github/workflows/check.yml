@@ -1,0 +1,29 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  syntax:
+    # The JS halves are platform independent; the native helper is IOKit-only
+    # and gets its own macOS job below.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node --check index.js
+      - run: node --check client.js
+
+  native:
+    # Compiling the SMC reader needs the macOS SDK and IOKit framework.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build SMC reader
+        run: ./build.sh
+      - name: Smoke-test the reader
+        run: ./native/smc-read

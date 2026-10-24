@@ -1,0 +1,46 @@
+name: release
+
+# Turn every version tag into a downloadable Release with a source archive.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check syntax
+        run: npm run check
+
+      - name: Build native reader
+        run: ./build.sh
+
+      - name: Assemble bundle
+        run: |
+          set -eu
+          name="dsh-power-meter-${GITHUB_REF_NAME}"
+          mkdir -p "dist/$name/native"
+          cp index.js client.js package.json cordis.patch.yml icon.svg README.md LICENSE "dist/$name/"
+          cp -R locale "dist/$name/"
+          cp native/smc.c native/smc-read "dist/$name/native/"
+          cp build.sh "dist/$name/"
+          # Prebuilt binary: keep the executable bit through the archive.
+          chmod +x "dist/$name/native/smc-read" "dist/$name/build.sh"
+          tar -C dist -czf "dist/$name.tar.gz" "$name"
+          shasum -a 256 "dist/$name.tar.gz" | tee "dist/$name.tar.gz.sha256"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/*.sha256
+          generate_release_notes: true
