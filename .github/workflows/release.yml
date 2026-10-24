@@ -35,7 +35,9 @@ jobs:
           # Prebuilt binary: keep the executable bit through the archive.
           chmod +x "dist/$name/native/smc-read" "dist/$name/build.sh"
           tar -C dist -czf "dist/$name.tar.gz" "$name"
-          shasum -a 256 "dist/$name.tar.gz" | tee "dist/$name.tar.gz.sha256"
+          # Strip the dist/ prefix so the checksum verifies from the download
+          # directory instead of only from the repo root.
+          ( cd dist && shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256" )
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
