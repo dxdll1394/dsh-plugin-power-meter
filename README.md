@@ -56,8 +56,8 @@ macOS 把 SMC 的电源遥测镜像成一个字典，挂在 `AppleSmartBattery` 
 
 机器内部有两个互相独立的约束，同时成立才唯一解出 µWh：
 
-1. **`AccumulatedSystemPowerIn` 是 mJ。** 它的增量 ÷ 经过秒数，精确复现 `SystemPowerIn` 的 mW 读数（实测 2969 mW vs 瞬时 2653–3384 mW）。所以该计数器单位是 mW·s = mJ。
-2. **它正好是 `AccumulatedSystemEnergyConsumed` 的 3.6021 倍**，而 1 mJ = 3.6 µWh。两者是同一段时间的两种记法，因此能量计数器只能是 µWh。
+1. **`AccumulatedSystemPowerIn` 是 mJ。** 它的增量 ÷ 经过秒数，精确复现 `SystemPowerIn` 的 mW 读数。所以该计数器单位是 mW·s = mJ。
+2. **它正好是 `AccumulatedSystemEnergyConsumed` 的约 3.6 倍**，而 1 mJ = 3.6 µWh。两者是同一段时间的两种记法，因此能量计数器只能是 µWh。
 
 另外 `WallEnergyEstimate` = `SystemEnergyConsumed` + `AdapterEfficiencyLoss` 在增量上严格成立，可作完整性自检。
 
