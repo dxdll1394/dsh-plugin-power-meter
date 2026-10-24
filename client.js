@@ -64,11 +64,9 @@ window.__ModuleLoader__.load({
       'panel.lossHint': '固件模型常数',
       'panel.hourWindow': '统计窗口 {window}',
       'panel.hourShort': '样本不足 10 分钟，暂不给平均',
-      'panel.last': '最近一次采样间隔',
+      'panel.lastShort': '上次实测',
       'panel.series': '各采样间隔的平均功率',
       'panel.sinceBoot': '自开机以来平均功率',
-      'panel.sampleMean': '近 1 小时瞬时均值',
-      'panel.sampleMeanHint': '{count} 个瞬时读数',
       'panel.instant': '瞬时功率',
       'panel.voltage': '输入电压',
       'panel.current': '输入电流',
@@ -118,11 +116,9 @@ window.__ModuleLoader__.load({
       'panel.lossHint': 'firmware model constant',
       'panel.hourWindow': 'Window {window}',
       'panel.hourShort': 'Under 10 minutes of samples; no average yet',
-      'panel.last': 'Latest sample interval',
+      'panel.lastShort': 'last read',
       'panel.series': 'Average power per sample interval',
       'panel.sinceBoot': 'Average since boot',
-      'panel.sampleMean': 'Instantaneous mean, last hour',
-      'panel.sampleMeanHint': '{count} readings',
       'panel.instant': 'Instantaneous power',
       'panel.voltage': 'Input voltage',
       'panel.current': 'Input current',
@@ -176,6 +172,11 @@ window.__ModuleLoader__.load({
 }
 .dsh-pm-refresh:hover:enabled { color: var(--dsw-alias-label-primary); border-color: var(--dsw-alias-label-secondary); }
 .dsh-pm-refresh:disabled { opacity: .55; cursor: default; }
+.dsh-pm-diag {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 10px 0 0; font-size: 11px; line-height: 1.5;
+  font-variant-numeric: tabular-nums; opacity: 0.66;
+}
 .dsh-pm-window { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .dsh-pm-window-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .dsh-pm-window-label { font-size: 11px; opacity: 0.62; }
@@ -735,12 +736,6 @@ window.__ModuleLoader__.load({
                         hint: t('panel.loadHint'),
                       }),
                       h(Stat, {
-                        label: t('panel.last'),
-                        value: Number.isFinite(power.lastIntervalW)
-                          ? formatPower(power.lastIntervalW)
-                          : t('unknown'),
-                      }),
-                      h(Stat, {
                         label: t('panel.sinceBoot'),
                         value: Number.isFinite(power.sinceBootW) ? formatPower(power.sinceBootW) : t('unknown'),
                       }),
@@ -749,14 +744,26 @@ window.__ModuleLoader__.load({
                         value: `${power.voltageV.toFixed(2)} V`,
                         hint: `${(power.currentA * 1000).toFixed(0)} mA · ${t('panel.current')}`,
                       }),
-                      h(Stat, {
-                        label: t('panel.interval'),
-                        value: `${data.sampling.intervalSeconds} s`,
-                        hint: `${t('panel.samples')} ${data.sampling.samples}`,
-                      }),
                     )
                   : h('p', { className: 'dsh-pm-note' }, headline === '' ? t('unavailable') : headline),
                 ready ? h(Sparkline, { series: data.series, t }) : null,
+                ready
+                  ? h(
+                      'p',
+                      { className: 'dsh-pm-diag' },
+                      h('span', null, `${t('panel.interval')} ${data.sampling.intervalSeconds} s`),
+                      h('span', { 'aria-hidden': true }, '·'),
+                      h('span', null, `${t('panel.samples')} ${data.sampling.samples}`),
+                      h('span', { 'aria-hidden': true }, '·'),
+                      h(
+                        'span',
+                        null,
+                        `${t('panel.lastShort')} ${
+                          Number.isFinite(power.lastIntervalW) ? formatPower(power.lastIntervalW) : t('unknown')
+                        }`,
+                      ),
+                    )
+                  : null,
                 h(
                   'p',
                   { className: 'dsh-pm-source' },

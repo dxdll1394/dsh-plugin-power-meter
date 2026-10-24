@@ -363,16 +363,6 @@ export function apply(ctx, config) {
         ? latest.wallWh / (uptimeSeconds / 3600)
         : undefined
 
-    // Mean of the sampled instantaneous readings over the same hour. The wall
-    // counter and the instantaneous estimate are different measurements (the
-    // counter is the meter basis the energy totals use), so both are reported
-    // rather than blended into one number.
-    const hourSamples = samples.filter((sample) => sample.t >= latest.t - windowMs)
-    const sampleMeanW =
-      hourSamples.length > 1
-        ? hourSamples.reduce((total, sample) => total + sample.instantW, 0) / hourSamples.length
-        : undefined
-
     return {
       ok: true,
       available: true,
@@ -411,8 +401,6 @@ export function apply(ctx, config) {
         windowSeconds: averaged === undefined ? undefined : averaged.seconds,
         windowComplete: averaged?.complete,
         windowMinutes,
-        hourSampleMeanW: sampleMeanW,
-        hourSampleCount: hourSamples.length,
         sinceBootW,
       },
       series,
