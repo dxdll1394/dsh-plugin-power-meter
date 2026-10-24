@@ -808,7 +808,7 @@ window.__ModuleLoader__.load({
                 h('span', { className: 'dsh-pm-uptime-sep dsh-pm-sep', 'aria-hidden': true }, '·'),
                 h('span', { className: 'dsh-pm-uptime' }, formatUptimeShort(boot.uptimeSeconds, t)),
                 h('span', { className: 'dsh-pm-sep', 'aria-hidden': true }, '·'),
-                h('span', { className: 'dsh-pm-flat' }, hourLabel),
+                h('span', { className: 'dsh-pm-flat' }, windowLabel),
                 h('span', { className: 'dsh-pm-num' }, hourText),
               )
             : h('span', { className: 'dsh-pm-flat' }, headline),

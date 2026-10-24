@@ -1,8 +1,14 @@
-# dsh-power-meter: one host row that samples AppleSmartBattery power
-# telemetry and serves it to the browser half beside the composer.
+# dsh-power-meter: one host row that samples Apple power telemetry (SMC PDTR/PSTR
+# for live watts, firmware energy counters for the cumulative totals) and serves
+# it to the browser half in the session header.
 - insert:
     - id: power-meter
       name: dsh-power-meter
       config:
-        sampleSeconds: 300
+        # The firmware energy counters refresh in ~60 s batches; sampling much
+        # faster only yields duplicates, which the ring discards.
+        sampleSeconds: 60
         historyHours: 24
+        # Default window for the average-power reading; the panel also lets the
+        # user pick 5 min … 6 h at runtime.
+        windowMinutes: 60

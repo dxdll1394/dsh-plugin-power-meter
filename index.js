@@ -32,7 +32,7 @@ const IOREG = '/usr/sbin/ioreg'
 const ROUTE_PATH = '/api/power-meter'
 
 /** How many readings to keep regardless of the configured window. */
-const MAX_SAMPLES = 1000
+const MAX_SAMPLES = 1600
 
 /**
  * Shortest window worth reporting. One full sample interval already gives a
@@ -59,10 +59,12 @@ function resolveConfig(config) {
   const historyHours = Number(config?.historyHours)
   const windowMinutes = Number(config?.windowMinutes)
   return {
+    // The firmware counters refresh in ~60 s batches, so sampling faster than
+    // that mostly yields duplicate values the ring discards.
     sampleSeconds:
       Number.isFinite(intervalSeconds) && intervalSeconds >= 30
         ? Math.min(3600, Math.round(intervalSeconds))
-        : 300,
+        : 60,
     historyHours:
       Number.isFinite(historyHours) && historyHours >= 1
         ? Math.min(168, Math.round(historyHours))
@@ -228,6 +230,8 @@ export function apply(ctx, config) {
     bootMs: undefined,
     lastError: undefined,
     sampling: false,
+    /** Whether the ring holds a usable first sample. */
+    seeded: false,
   }
 
   const prune = (now) => {
@@ -262,6 +266,24 @@ export function apply(ctx, config) {
       // The counter only moves forward; a drop means the SMC counter restarted
       // (or the machine rebooted), so the ring is no longer comparable.
       if (previous !== undefined && reading.wallWh < previous.wallWh) samples.length = 0
+      if (previous !== undefined && reading.wallWh === previous.wallWh) {
+        // The firmware refreshes its counters in batches about once a minute.
+        // A read inside a batch repeats the last value; storing it would make
+        // the interval look like 0 W. Skip it and only refresh the live view.
+        //
+        // The very first committed sample is the exception: without it the
+        // ring stays empty and the panel would report "no sample" forever
+        // whenever the host starts between two counter refreshes.
+        if (!state.seeded) {
+          state.seeded = true
+          samples.push(reading)
+          prune(reading.t)
+          return reading
+        }
+        state.adhoc = reading
+        return reading
+      }
+      state.seeded = true
       samples.push(reading)
       prune(reading.t)
       state.adhoc = undefined

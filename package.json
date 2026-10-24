@@ -1,8 +1,8 @@
 {
   "name": "dsh-power-meter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "Shows this Mac's cumulative wall energy, boot time and rolling average power inside the DSH web GUI, with a click-through detail panel. 在 DSH 里显示整机总耗电量、开机时间与最近一小时平均功率。",
+  "description": "Shows this Mac's cumulative wall energy, boot time and a selectable rolling-average power inside the DSH web GUI. Live watts come from SMC (PDTR/PSTR); cumulative energy from the firmware counters. 在 DSH 里显示整机累计耗电、开机时间与可调窗口的平均功率。",
   "type": "module",
   "main": "./index.js",
   "exports": {
@@ -17,7 +17,9 @@
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
-    "README.md"
+    "README.md",
+    "native/smc.c",
+    "native/smc-read"
   ],
   "dsh": {
     "bundle": {
