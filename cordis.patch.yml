@@ -1,0 +1,8 @@
+# dsh-power-meter: one host row that samples AppleSmartBattery power
+# telemetry and serves it to the browser half beside the composer.
+- insert:
+    - id: power-meter
+      name: dsh-power-meter
+      config:
+        sampleSeconds: 300
+        historyHours: 24

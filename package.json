@@ -1,0 +1,35 @@
+{
+  "name": "dsh-power-meter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shows this Mac's cumulative wall energy, boot time and rolling average power inside the DSH web GUI, with a click-through detail panel. 在 DSH 里显示整机总耗电量、开机时间与最近一小时平均功率。",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-renderer"
+      ]
+    }
+  }
+}

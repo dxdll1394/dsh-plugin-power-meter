@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Power meter">
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="#1f6f5c"/>
+  <circle cx="256" cy="268" r="132" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="20"/>
+  <path d="M 256 268 L 342 168" fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="256" cy="268" r="20" fill="#ffffff"/>
+  <path d="M 268 84 L 200 194 h 46 l -10 90 74 -118 h -50 l 8 -82 Z" fill="#ffd166"/>
+  <path d="M 124 420 h 264" stroke="#ffffff" stroke-opacity="0.45" stroke-width="20" stroke-linecap="round"/>
+</svg>

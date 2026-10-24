@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Power Meter",
+    "description": "Shows this Mac's cumulative wall energy, boot time and rolling hourly average power under the composer, refreshed every 5 minutes, with a click-through detail panel."
+  }
+}
