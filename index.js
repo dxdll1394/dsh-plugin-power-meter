@@ -59,12 +59,12 @@ function resolveConfig(config) {
   const historyHours = Number(config?.historyHours)
   const windowMinutes = Number(config?.windowMinutes)
   return {
-    // The firmware counters refresh in ~60 s batches, so sampling faster than
-    // that mostly yields duplicate values the ring discards.
+    // Default 5-minute cadence. Below ~60 s the firmware counters (which
+    // refresh in batches) simply repeat, so a denser ring buys nothing.
     sampleSeconds:
       Number.isFinite(intervalSeconds) && intervalSeconds >= 30
         ? Math.min(3600, Math.round(intervalSeconds))
-        : 60,
+        : 300,
     historyHours:
       Number.isFinite(historyHours) && historyHours >= 1
         ? Math.min(168, Math.round(historyHours))
@@ -110,7 +110,10 @@ async function readTelemetry() {
   }
   let stdout
   try {
-    const result = await execFileAsync(IOREG, ['-c', 'AppleSmartBattery', '-w0'], {
+    // `-n` + `-r` addresses the node by name and prints just its subtree
+    // (~2 KB); `-c` matches the class and dumps every property of every match
+    // (~328 KB). Same PowerTelemetryData either way, a third of the CPU.
+    const result = await execFileAsync(IOREG, ['-n', 'AppleSmartBattery', '-w0', '-r'], {
       timeout: 5000,
       maxBuffer: 8 * 1024 * 1024,
     })

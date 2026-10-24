@@ -23,7 +23,7 @@ window.__ModuleLoader__.load({
     const ENDPOINT = '/api/power-meter'
     /** Fallback refresh cadence; the host reports its own interval. */
     /** Fallback only used before the first host payload arrives. */
-    const DEFAULT_INTERVAL_MS = 60_000
+    const DEFAULT_INTERVAL_MS = 300_000
 
     /** Preset observation windows, in minutes (5m … 6h). */
     const WINDOW_STEPS = [5, 15, 30, 60, 120, 240, 360]

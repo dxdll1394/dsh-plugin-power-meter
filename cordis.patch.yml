@@ -5,9 +5,11 @@
     - id: power-meter
       name: dsh-power-meter
       config:
-        # The firmware energy counters refresh in ~60 s batches; sampling much
-        # faster only yields duplicates, which the ring discards.
-        sampleSeconds: 60
+        # Back to a 5-minute cadence. The firmware energy counters only refresh
+        # in ~60 s batches, so the extra resolution of 60 s mainly bought
+        # repeated values the ring discards; 300 s keeps the same information
+        # at a fifth of the sampling cost.
+        sampleSeconds: 300
         historyHours: 24
         # Default window for the average-power reading; the panel also lets the
         # user pick 5 min … 6 h at runtime.
